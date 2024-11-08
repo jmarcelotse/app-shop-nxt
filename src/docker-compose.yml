@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # Banco de Dados PostgreSQL
+  db:
+    image: postgres:13  # Usando uma imagem do PostgreSQL 13
+    environment:
+      POSTGRES_USER: ecommerce
+      POSTGRES_PASSWORD: Pg1234
+      POSTGRES_DB: ecommerce
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Aplicação Flask
+  web:
+    build: .  # Usa o Dockerfile na raiz do projeto
+    ports:
+      - "5000:5000"  # Expondo a porta 5000 para acesso local
+    environment:
+      DB_HOST: db
+      DB_USER: ecommerce
+      DB_PASSWORD: Pg1234
+      DB_NAME: ecommerce
+      DB_PORT: 5432
+    depends_on:
+      - db  # Garante que o banco de dados inicie antes do app
+    volumes:
+      - .:/app  # Monta o código local no contêiner para desenvolvimento
+
+# Volume para armazenar dados do banco de dados
+volumes:
+  db_data:
